@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" class="display" disabled>
+        <div class="buttons">
+    
+            <button class="btn" id="backspace">←</button>
+            <button class="btn" id="clear">C</button>
+            <button class="btn">%</button>
+            <button class="btn">/</button>
+
+            <button class="btn">7</button>
+            <button class="btn">8</button>
+            <button class="btn">9</button>
+            <button class="btn">*</button>
+
+            <button class="btn">4</button>
+            <button class="btn">5</button>
+            <button class="btn">6</button>
+            <button class="btn">-</button>
+
+            <button class="btn">1</button>
+            <button class="btn">2</button>
+            <button class="btn">3</button>
+            <button class="btn">+</button>
+
+
+            <button class="btn" class="zero">0</button>
+            <button class="btn">,</button>
+            <button class="btn" id="equals">=</button>
+        </div>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('.btn');
+        const display = document.querySelector('.display');
+        const clearButton = document.getElementById('clear');
+        const backspaceButton = document.getElementById('backspace');
+        const equalsButton = document.getElementById('equals');
+
+        let currentInput = '';
+        let operator = '';
+        let previousInput = '';
+
+
+        function updateDisplay() {
+            display.value = currentInput.replace('.', ','); 
+        }
+
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.textContent;
+
+                if (value === '%') {
+                    if (currentInput) {
+                        currentInput = (parseFloat(currentInput) / 100).toString();
+                        updateDisplay();
+                    }
+                } else if (value === ',') {
+                    if (!currentInput.includes('.')) {
+                        currentInput += '.';
+                        updateDisplay();
+                    }
+                } else if (['+', '-', '*', '/'].includes(value)) {
+                    if (currentInput) {
+                        previousInput = currentInput;
+                        operator = value;
+                        currentInput = '';
+                    }
+                } else if (value === '=') {
+                    // Calcula o resultado
+                    if (previousInput && currentInput && operator) {
+                        try {
+                            currentInput = eval(previousInput + operator + currentInput).toString(); // Avalia a expressão
+                            updateDisplay();
+                        } catch (error) {
+                            alert('Erro na operação!');
+                        }
+                        previousInput = '';
+                        operator = '';
+                    }
+                } else {
+                    currentInput += value;
+                    updateDisplay();
+                }
+            });
+        });
+
+
+        clearButton.addEventListener('click', () => {
+            currentInput = '';
+            previousInput = '';
+            operator = '';
+            updateDisplay();
+        });
+
+        backspaceButton.addEventListener('click', () => {
+            if (currentInput.length > 0) {
+                currentInput = currentInput.slice(0, -1); // Remove o último caractere
+                updateDisplay();
+            }
+        });
+    </script>
+
+
+</body>
+</html>
